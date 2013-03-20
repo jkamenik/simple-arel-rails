@@ -14,6 +14,13 @@ module SimpleArel
     end
     alias_method :|, :or
 
+    def not(other)
+      left,right,scope = binary_scope other
+      scope.where_values = [left, right.not]
+      scope
+    end
+    alias_method :-, :not
+
   private
     def binary_scope(other)
       left  = group_and_reduce self.arel.constraints
