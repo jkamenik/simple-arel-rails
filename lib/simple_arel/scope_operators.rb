@@ -31,7 +31,7 @@ module SimpleArel
 
     def group_and_reduce(side)
       # just reduce if I am 1 large with no children
-      return side.reduce(:and) if side.size <= 1 && side.first.children.size <= 1
+      return side.reduce(:and) if side.size <= 1 && (side.respond_to?(:children) && side.first.children.size <= 1)
 
       Arel::Nodes::Grouping.new(side.reduce(:and))
     end
