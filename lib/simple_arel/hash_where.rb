@@ -10,12 +10,6 @@ module SimpleArel
 
       clause = matches.map do |attribute, conditions|
         recursive_hash_where(attribute,:eq,conditions)
-        #Array.wrap(conditions).map do |predicates|
-        #  predicates = predicates.kind_of?(Hash) ? predicates : {eq: predicates}
-        #  predicates.map do |predicate, value|
-        #    arel_table[attribute].send(predicate, value)
-        #  end.reduce(:and)
-        #end.reduce(:or)
       end.reduce(:and)
       where(clause)
     end
@@ -24,19 +18,14 @@ module SimpleArel
 
   private
     def recursive_hash_where(attribute,predicate,condition)
-      puts "#{attribute} #{predicate} #{condition.inspect}"
       return arel_table[attribute].send(predicate,condition) unless condition.is_a?(Hash) || condition.is_a?(Array)
 
       if condition.is_a? Array
-        puts 'array'
-        puts condition.inspect
         Arel::Nodes::Grouping.new(condition.map do |value|
           recursive_hash_where(attribute, predicate, value)
         end.reduce(:or))
       else
         Arel::Nodes::Grouping.new(condition.map do |p,value|
-          puts predicate.inspect
-          puts value.inspect
           recursive_hash_where(attribute,p,value)
         end.reduce(:and))
       end
