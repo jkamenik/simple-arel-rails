@@ -5,7 +5,7 @@ describe SimpleArel::ScopeOperators do
     context 'with singlar clauses' do
       it 'should join them with "AND"' do
         relation = (User.where(:name => 'john') & User.where(:name => 'doe'))
-        relation.to_sql.should match /WHERE \("users"."name" = 'john' AND "users"."name" = 'doe'\)/
+        relation.to_sql.should match /WHERE \(+"users"."name" = 'john'\)? AND \(?"users"."name" = 'doe'\)/
       end
     end
 
